@@ -1,0 +1,29 @@
+#
+#
+#
+
+#include "Offline/fcl/minimalMessageService.fcl"
+#include "Offline/fcl/standardProducers.fcl"
+#include "Offline/fcl/standardServices.fcl"
+
+
+process_name : pdgTest
+
+services : { @table::Services.Core
+#  message : @local::mf_production
+#   TFileService          : { fileName : "validation.root" }
+}
+
+physics :{
+  analyzers: {
+    pdgTest : {
+      module_type : PdgTest
+    }
+  }
+
+  e1        : [ pdgTest ]
+  end_paths : [ e1 ]
+
+}
+
+source.maxEvents: 1

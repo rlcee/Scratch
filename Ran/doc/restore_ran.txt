@@ -1,0 +1,21 @@
+1) write a nominal file
+turned off all paths except beam
+mu2e -n 100 -c nominal.fcl -o nominal.art 2>&1 | tee nominal.log
+
+2) add randomsaver to potSim, turned off all paths except beam, make writeran.fcl
+write writeran.art
+mu2e -n 100 -c writeran.fcl -o writeran.art 2>&1 | tee writeran.log
+random seeds are 2% of output
+
+3) filter half of events from nominal and writeran with ran only
+mu2e -c filter0.fcl -s nominal.art -o nominal_2.art 2>&1 | tee nominal_2.log
+mu2e -c filter1.fcl -s writeran.art -o writeran_2.art 2>&1 | tee writeran_2.log
+
+4) rerun potsim on file with ran numbers
+mu2e -c readran.fcl -s writeran_2.art -o readran.art 2>&1 | tee readran.log
+
+5) run validation
+mu2e -c Offline/Validation/fcl/val.fcl -s nominal_2.art -T nominal_2.root
+mu2e -c Offline/Validation/fcl/val.fcl -s readran.art -T readran.root
+valCompare -s nominal_2.root readran.root
+

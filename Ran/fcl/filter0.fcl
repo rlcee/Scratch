@@ -1,0 +1,49 @@
+#
+# generate conversion electrons from stopped muons
+# and simulate all the way through the detector
+# run calorimeter and tracker and CRV reco
+#
+#include "Offline/fcl/standardServices.fcl"
+#include "Offline/EventGenerator/fcl/prolog.fcl"
+#include "Production/JobConfig/common/prolog.fcl"
+#include "Production/JobConfig/primary/prolog.fcl"
+#include "Production/JobConfig/digitize/prolog.fcl"
+#include "Production/JobConfig/reco/prolog.fcl"
+
+process_name : filter0
+
+source : {
+  module_type : RootInput
+}
+services : @local::Services.Sim
+
+physics: {
+  filters : {
+    efilter : {
+      module_type          : RSEFilter
+    }
+   }
+  TriggerPath : [
+    efilter
+  ]
+  EndPath : [
+    Output
+  ]
+  trigger_paths : [ TriggerPath ]
+  end_paths : [ EndPath ]
+}
+
+outputs : {
+  Output : {
+    module_type : RootOutput
+    SelectEvents : [ TriggerPath ]
+    fileName    : @nil
+    outputCommands : [
+#      "drop *_*_*_*",
+#      "keep *snapshots*_*_*_*"
+      "keep *_*_*_*"
+    ]
+  }
+}
+
+services.SeedService.baseSeed         :  8
